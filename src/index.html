@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourTale - Generate Story</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #story-box {
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>YourTale - Story Generator</h1>
+
+    <div>
+        <label for="character-name">Character Name:</label>
+        <input type="text" id="character-name" required><br><br>
+
+        <label for="theme">Theme:</label>
+        <input type="text" id="theme" required><br><br>
+
+        <label for="style">Style:</label>
+        <input type="text" id="style" required><br><br>
+
+        <button onclick="generateStory()">Generate Story</button>
+    </div>
+
+    <div id="story-box"></div>
+
+    <script>
+        function generateStory() {
+            const characterName = document.getElementById('character-name').value;
+            const theme = document.getElementById('theme').value;
+            const style = document.getElementById('style').value;
+
+            fetch('http://127.0.0.1:5000/generate_story', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    character_name: characterName,
+                    theme: theme,
+                    style: style
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const storyText = data.story_text;
+                const imageUrl = data.image_url;
+
+                document.getElementById('story-box').innerHTML = `
+                    <h2>Story:</h2>
+                    <p>${storyText}</p>
+                    <img src="${imageUrl}" alt="Story Image">
+                `;
+            })
+            .catch(error => console.error('Error generating story:', error));
+        }
+    </script>
+</body>
+</html>
